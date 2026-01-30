@@ -8,7 +8,7 @@ The goal is to have a full Chip-8 Emulator capable of running the basic programs
 ### What is working
 - Display (displaying a basic 320x640 window that can be drawn to).
 ### What is a WIP
-- Registry management
+- Memory management
 - Loading file
 
 
