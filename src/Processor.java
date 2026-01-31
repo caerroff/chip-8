@@ -5,34 +5,47 @@ public class Processor {
 
     private Memory memory;
 
+    private byte[] code;
+
+    private short codeIndex;
+
     public Processor(Display display) {
         this.display = display;
         this.memory = new Memory();
     }
 
-    public void copyToMemory(byte[] bytes) {
-        for (int i = 0; i < bytes.length; i++) {
-            memory.setMemory(bytes[i]);
-        }
+    public void setCode(byte[] code){
+        this.code = code;
+        this.codeIndex = 0;
     }
 
-    public void printMemory() {
-        System.out.println(this.memory.getMemory());
+    public boolean callSubroutine(short position) {
+        this.codeIndex += 1;
+        this.memory.pushStack(codeIndex);
+        this.codeIndex = position;
+        return true;
     }
+
 
     public void parse() {
-        this.memory.setIndex(0);
+        this.codeIndex = 0;
+        int instruction;
+        int argument;
         while (true) {
-            int instruction = this.memory.loadCurrentAddress();
-            int argument = this.memory.loadCurrentAddressPlusOne();
+            instruction = this.code[codeIndex] & 0xFF;
+            argument = this.code[codeIndex +1] & 0xFF;
+            // System.out.println(Integer.toHexString(instruction));
             try{
                 this.execute(instruction, argument);
             }catch(Exception e){
                 System.err.println(e);
                 break;
             }
-            if(!this.memory.nextIndex(4)){
+            if(this.code.length <= this.codeIndex + 1){
+                System.out.println("Out of bounds... Trying to load " + this.codeIndex + " out of length " + this.code.length);
                 return;
+            }else{
+                this.codeIndex+=2;
             }
         }
     }
@@ -41,7 +54,7 @@ public class Processor {
         // Total of 35 different OPcodes, 34 to be implemented.
         // Currently implemented: 9.
         this.memory.setOpcode(opcode);
-        System.out.println("");
+        System.out.println("OpCode: 0x" + Integer.toHexString(opcode) + " at index 0x" + Integer.toHexString(codeIndex));
         switch(Integer.toHexString(opcode).charAt(0)){
             // Clear Display
             case '0':
@@ -56,8 +69,8 @@ public class Processor {
             case '2':
                 String positionHex = Integer.toHexString(opcode).charAt(1) + Integer.toHexString(argument);
                 System.out.println("Jumping to :" + positionHex);
-                int position = HexFormat.fromHexDigits(positionHex);
-                this.memory.callSubroutine(position);
+                short position = (short) HexFormat.fromHexDigits(positionHex);
+                this.callSubroutine(position);
                 break;
 
 
@@ -67,7 +80,7 @@ public class Processor {
                 // If yes, do nothing
                 // If no, increment program counter by 2
                 if(!this.memory.checkIfEquals(Integer.toHexString(opcode).charAt(1), argument)){
-                    this.memory.nextIndex(4);
+                    this.codeIndex++;
                 }
                 break;
             //load into registry
@@ -90,6 +103,11 @@ public class Processor {
                 if(Integer.toHexString(argument).charAt(1) == '7'){
                     this.memory.subnRegistry( Integer.toHexString(opcode).charAt(1), Integer.toHexString(argument).charAt(0));
                 }
+                break;
+            case 'a':
+                String valueHex = Integer.toHexString(opcode).charAt(1) + Integer.toHexString(argument);
+                short value = (short) HexFormat.fromHexDigits(valueHex);
+                this.memory.setIndexRegister(value);
                 break;
             default:
                 throw new Exception("Not Implemented " + Integer.toHexString(opcode));

@@ -19,7 +19,8 @@ public class Main {
         try{
             Path path = Paths.get(args[0]);
             byte[] bytes = Files.readAllBytes(path);
-            processor.copyToMemory(bytes);
+            System.out.println("Length: " + bytes.length);
+            processor.setCode(bytes);
 
             processor.parse();
 
