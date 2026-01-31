@@ -6,6 +6,7 @@ public class Memory {
     private byte stackPointer = 0; // stack pointer
     private int[] V = new int[16]; // V registries
     private int indexRegister = 0;
+    private short[] addressableMemory = new short[4096];
 
     public Memory() {
 
