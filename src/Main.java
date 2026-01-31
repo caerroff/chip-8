@@ -1,26 +1,29 @@
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to the Chip-8 Emulator");
-
-        for(int i = 0; i < args.length; i++){
-            System.out.println(args[i]);
-        }
-
         if(args.length < 1){
             return;
         }
 
+
         Display display = new Display();
+        Processor processor = new Processor(display);
         display.clearFrame();
         System.out.println("Launching " + args[0]);
         try{
-            FileReader reader = new FileReader(args[0]);
-            reader.close();
-        }catch(FileNotFoundException e){
+            Path path = Paths.get(args[0]);
+            byte[] bytes = Files.readAllBytes(path);
+            processor.copyToMemory(bytes);
+
+            processor.parse();
+
+        }catch(InvalidPathException e){
             System.out.println("File not found. Exiting");
         }catch(IOException e){
             System.out.println("IOException...");
