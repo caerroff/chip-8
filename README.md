@@ -19,7 +19,7 @@ make run
 The goal is to have a full Chip-8 Emulator capable of running the basic programs designed for this virtual chip, as well as new ones.
 
 ### What is working
-- Display (displaying a basic 320x640 window that can be drawn to).
+- Display (displaying a basic 640x320 window that can be drawn to).
 ### What is a WIP
 - Memory management
 - Loading file
