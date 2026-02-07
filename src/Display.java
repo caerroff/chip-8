@@ -20,4 +20,8 @@ public class Display {
         this.display.getContentPane().setBackground(java.awt.Color.BLACK);
         this.display.repaint();
     }
+
+    public void displaySprite(int x, int y, int n){
+        ;
+    }
 }

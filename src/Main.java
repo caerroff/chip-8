@@ -28,6 +28,9 @@ public class Main {
             System.out.println("File not found. Exiting");
         }catch(IOException e){
             System.out.println("IOException...");
+        }catch(Exception e){
+            System.out.println(e);
+            return;
         }
     }
 }
